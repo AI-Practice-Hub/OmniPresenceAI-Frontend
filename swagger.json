@@ -1,0 +1,574 @@
+﻿{
+    "openapi":  "3.1.0",
+    "info":  {
+                 "title":  "OmniPresenceAI API",
+                 "version":  "0.1.0"
+             },
+    "paths":  {
+                  "/api/auth/signup":  {
+                                           "post":  {
+                                                        "tags":  [
+                                                                     "auth"
+                                                                 ],
+                                                        "summary":  "Signup",
+                                                        "operationId":  "signup_api_auth_signup_post",
+                                                        "requestBody":  {
+                                                                            "content":  {
+                                                                                            "application/json":  {
+                                                                                                                     "schema":  {
+                                                                                                                                    "$ref":  "#/components/schemas/UserCreate"
+                                                                                                                                }
+                                                                                                                 }
+                                                                                        },
+                                                                            "required":  true
+                                                                        },
+                                                        "responses":  {
+                                                                          "201":  {
+                                                                                      "description":  "Successful Response",
+                                                                                      "content":  {
+                                                                                                      "application/json":  {
+                                                                                                                               "schema":  {
+                                                                                                                                              "$ref":  "#/components/schemas/UserResponse"
+                                                                                                                                          }
+                                                                                                                           }
+                                                                                                  }
+                                                                                  },
+                                                                          "422":  {
+                                                                                      "description":  "Validation Error",
+                                                                                      "content":  {
+                                                                                                      "application/json":  {
+                                                                                                                               "schema":  {
+                                                                                                                                              "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                          }
+                                                                                                                           }
+                                                                                                  }
+                                                                                  }
+                                                                      }
+                                                    }
+                                       },
+                  "/api/auth/login":  {
+                                          "post":  {
+                                                       "tags":  [
+                                                                    "auth"
+                                                                ],
+                                                       "summary":  "Login",
+                                                       "operationId":  "login_api_auth_login_post",
+                                                       "requestBody":  {
+                                                                           "content":  {
+                                                                                           "application/x-www-form-urlencoded":  {
+                                                                                                                                     "schema":  {
+                                                                                                                                                    "$ref":  "#/components/schemas/Body_login_api_auth_login_post"
+                                                                                                                                                }
+                                                                                                                                 }
+                                                                                       },
+                                                                           "required":  true
+                                                                       },
+                                                       "responses":  {
+                                                                         "200":  {
+                                                                                     "description":  "Successful Response",
+                                                                                     "content":  {
+                                                                                                     "application/json":  {
+                                                                                                                              "schema":  {
+                                                                                                                                             "$ref":  "#/components/schemas/Token"
+                                                                                                                                         }
+                                                                                                                          }
+                                                                                                 }
+                                                                                 },
+                                                                         "422":  {
+                                                                                     "description":  "Validation Error",
+                                                                                     "content":  {
+                                                                                                     "application/json":  {
+                                                                                                                              "schema":  {
+                                                                                                                                             "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                         }
+                                                                                                                          }
+                                                                                                 }
+                                                                                 }
+                                                                     }
+                                                   }
+                                      },
+                  "/api/avatars/":  {
+                                        "get":  {
+                                                    "tags":  [
+                                                                 "avatars"
+                                                             ],
+                                                    "summary":  "List Avatars",
+                                                    "operationId":  "list_avatars_api_avatars__get",
+                                                    "responses":  {
+                                                                      "200":  {
+                                                                                  "description":  "Successful Response",
+                                                                                  "content":  {
+                                                                                                  "application/json":  {
+                                                                                                                           "schema":  {
+                                                                                                                                          "items":  {
+                                                                                                                                                        "$ref":  "#/components/schemas/AvatarResponse"
+                                                                                                                                                    },
+                                                                                                                                          "type":  "array",
+                                                                                                                                          "title":  "Response List Avatars Api Avatars  Get"
+                                                                                                                                      }
+                                                                                                                       }
+                                                                                              }
+                                                                              }
+                                                                  },
+                                                    "security":  [
+                                                                     {
+                                                                         "OAuth2PasswordBearer":  [
+
+                                                                                                  ]
+                                                                     }
+                                                                 ]
+                                                },
+                                        "post":  {
+                                                     "tags":  [
+                                                                  "avatars"
+                                                              ],
+                                                     "summary":  "Upload Avatar",
+                                                     "operationId":  "upload_avatar_api_avatars__post",
+                                                     "requestBody":  {
+                                                                         "content":  {
+                                                                                         "multipart/form-data":  {
+                                                                                                                     "schema":  {
+                                                                                                                                    "$ref":  "#/components/schemas/Body_upload_avatar_api_avatars__post"
+                                                                                                                                }
+                                                                                                                 }
+                                                                                     },
+                                                                         "required":  true
+                                                                     },
+                                                     "responses":  {
+                                                                       "201":  {
+                                                                                   "description":  "Successful Response",
+                                                                                   "content":  {
+                                                                                                   "application/json":  {
+                                                                                                                            "schema":  {
+                                                                                                                                           "$ref":  "#/components/schemas/AvatarResponse"
+                                                                                                                                       }
+                                                                                                                        }
+                                                                                               }
+                                                                               },
+                                                                       "422":  {
+                                                                                   "description":  "Validation Error",
+                                                                                   "content":  {
+                                                                                                   "application/json":  {
+                                                                                                                            "schema":  {
+                                                                                                                                           "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                       }
+                                                                                                                        }
+                                                                                               }
+                                                                               }
+                                                                   },
+                                                     "security":  [
+                                                                      {
+                                                                          "OAuth2PasswordBearer":  [
+
+                                                                                                   ]
+                                                                      }
+                                                                  ]
+                                                 }
+                                    },
+                  "/api/audios/":  {
+                                       "get":  {
+                                                   "tags":  [
+                                                                "audios"
+                                                            ],
+                                                   "summary":  "List Audios",
+                                                   "operationId":  "list_audios_api_audios__get",
+                                                   "responses":  {
+                                                                     "200":  {
+                                                                                 "description":  "Successful Response",
+                                                                                 "content":  {
+                                                                                                 "application/json":  {
+                                                                                                                          "schema":  {
+                                                                                                                                         "items":  {
+                                                                                                                                                       "$ref":  "#/components/schemas/AudioResponse"
+                                                                                                                                                   },
+                                                                                                                                         "type":  "array",
+                                                                                                                                         "title":  "Response List Audios Api Audios  Get"
+                                                                                                                                     }
+                                                                                                                      }
+                                                                                             }
+                                                                             }
+                                                                 },
+                                                   "security":  [
+                                                                    {
+                                                                        "OAuth2PasswordBearer":  [
+
+                                                                                                 ]
+                                                                    }
+                                                                ]
+                                               },
+                                       "post":  {
+                                                    "tags":  [
+                                                                 "audios"
+                                                             ],
+                                                    "summary":  "Upload Audio",
+                                                    "operationId":  "upload_audio_api_audios__post",
+                                                    "requestBody":  {
+                                                                        "content":  {
+                                                                                        "multipart/form-data":  {
+                                                                                                                    "schema":  {
+                                                                                                                                   "$ref":  "#/components/schemas/Body_upload_audio_api_audios__post"
+                                                                                                                               }
+                                                                                                                }
+                                                                                    },
+                                                                        "required":  true
+                                                                    },
+                                                    "responses":  {
+                                                                      "201":  {
+                                                                                  "description":  "Successful Response",
+                                                                                  "content":  {
+                                                                                                  "application/json":  {
+                                                                                                                           "schema":  {
+                                                                                                                                          "$ref":  "#/components/schemas/AudioResponse"
+                                                                                                                                      }
+                                                                                                                       }
+                                                                                              }
+                                                                              },
+                                                                      "422":  {
+                                                                                  "description":  "Validation Error",
+                                                                                  "content":  {
+                                                                                                  "application/json":  {
+                                                                                                                           "schema":  {
+                                                                                                                                          "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                      }
+                                                                                                                       }
+                                                                                              }
+                                                                              }
+                                                                  },
+                                                    "security":  [
+                                                                     {
+                                                                         "OAuth2PasswordBearer":  [
+
+                                                                                                  ]
+                                                                     }
+                                                                 ]
+                                                }
+                                   },
+                  "/":  {
+                            "get":  {
+                                        "summary":  "Root",
+                                        "operationId":  "root__get",
+                                        "responses":  {
+                                                          "200":  {
+                                                                      "description":  "Successful Response",
+                                                                      "content":  {
+                                                                                      "application/json":  {
+                                                                                                               "schema":  {
+
+                                                                                                                          }
+                                                                                                           }
+                                                                                  }
+                                                                  }
+                                                      }
+                                    }
+                        }
+              },
+    "components":  {
+                       "schemas":  {
+                                       "AudioResponse":  {
+                                                             "properties":  {
+                                                                                "id":  {
+                                                                                           "type":  "string",
+                                                                                           "title":  "Id"
+                                                                                       },
+                                                                                "user_id":  {
+                                                                                                "type":  "string",
+                                                                                                "title":  "User Id"
+                                                                                            },
+                                                                                "name":  {
+                                                                                             "type":  "string",
+                                                                                             "title":  "Name"
+                                                                                         },
+                                                                                "audio_url":  {
+                                                                                                  "type":  "string",
+                                                                                                  "title":  "Audio Url"
+                                                                                              },
+                                                                                "created_at":  {
+                                                                                                   "type":  "string",
+                                                                                                   "format":  "date-time",
+                                                                                                   "title":  "Created At"
+                                                                                               }
+                                                                            },
+                                                             "type":  "object",
+                                                             "required":  [
+                                                                              "id",
+                                                                              "user_id",
+                                                                              "name",
+                                                                              "audio_url",
+                                                                              "created_at"
+                                                                          ],
+                                                             "title":  "AudioResponse"
+                                                         },
+                                       "AvatarResponse":  {
+                                                              "properties":  {
+                                                                                 "id":  {
+                                                                                            "type":  "string",
+                                                                                            "title":  "Id"
+                                                                                        },
+                                                                                 "user_id":  {
+                                                                                                 "type":  "string",
+                                                                                                 "title":  "User Id"
+                                                                                             },
+                                                                                 "name":  {
+                                                                                              "type":  "string",
+                                                                                              "title":  "Name"
+                                                                                          },
+                                                                                 "image_url":  {
+                                                                                                   "type":  "string",
+                                                                                                   "title":  "Image Url"
+                                                                                               },
+                                                                                 "created_at":  {
+                                                                                                    "type":  "string",
+                                                                                                    "format":  "date-time",
+                                                                                                    "title":  "Created At"
+                                                                                                }
+                                                                             },
+                                                              "type":  "object",
+                                                              "required":  [
+                                                                               "id",
+                                                                               "user_id",
+                                                                               "name",
+                                                                               "image_url",
+                                                                               "created_at"
+                                                                           ],
+                                                              "title":  "AvatarResponse"
+                                                          },
+                                       "Body_login_api_auth_login_post":  {
+                                                                              "properties":  {
+                                                                                                 "grant_type":  {
+                                                                                                                    "anyOf":  [
+                                                                                                                                  {
+                                                                                                                                      "type":  "string",
+                                                                                                                                      "pattern":  "^password$"
+                                                                                                                                  },
+                                                                                                                                  {
+                                                                                                                                      "type":  "null"
+                                                                                                                                  }
+                                                                                                                              ],
+                                                                                                                    "title":  "Grant Type"
+                                                                                                                },
+                                                                                                 "username":  {
+                                                                                                                  "type":  "string",
+                                                                                                                  "title":  "Username"
+                                                                                                              },
+                                                                                                 "password":  {
+                                                                                                                  "type":  "string",
+                                                                                                                  "format":  "password",
+                                                                                                                  "title":  "Password"
+                                                                                                              },
+                                                                                                 "scope":  {
+                                                                                                               "type":  "string",
+                                                                                                               "title":  "Scope",
+                                                                                                               "default":  ""
+                                                                                                           },
+                                                                                                 "client_id":  {
+                                                                                                                   "anyOf":  [
+                                                                                                                                 {
+                                                                                                                                     "type":  "string"
+                                                                                                                                 },
+                                                                                                                                 {
+                                                                                                                                     "type":  "null"
+                                                                                                                                 }
+                                                                                                                             ],
+                                                                                                                   "title":  "Client Id"
+                                                                                                               },
+                                                                                                 "client_secret":  {
+                                                                                                                       "anyOf":  [
+                                                                                                                                     {
+                                                                                                                                         "type":  "string"
+                                                                                                                                     },
+                                                                                                                                     {
+                                                                                                                                         "type":  "null"
+                                                                                                                                     }
+                                                                                                                                 ],
+                                                                                                                       "format":  "password",
+                                                                                                                       "title":  "Client Secret"
+                                                                                                                   }
+                                                                                             },
+                                                                              "type":  "object",
+                                                                              "required":  [
+                                                                                               "username",
+                                                                                               "password"
+                                                                                           ],
+                                                                              "title":  "Body_login_api_auth_login_post"
+                                                                          },
+                                       "Body_upload_audio_api_audios__post":  {
+                                                                                  "properties":  {
+                                                                                                     "name":  {
+                                                                                                                  "type":  "string",
+                                                                                                                  "title":  "Name"
+                                                                                                              },
+                                                                                                     "file":  {
+                                                                                                                  "type":  "string",
+                                                                                                                  "contentMediaType":  "application/octet-stream",
+                                                                                                                  "title":  "File"
+                                                                                                              }
+                                                                                                 },
+                                                                                  "type":  "object",
+                                                                                  "required":  [
+                                                                                                   "name",
+                                                                                                   "file"
+                                                                                               ],
+                                                                                  "title":  "Body_upload_audio_api_audios__post"
+                                                                              },
+                                       "Body_upload_avatar_api_avatars__post":  {
+                                                                                    "properties":  {
+                                                                                                       "name":  {
+                                                                                                                    "type":  "string",
+                                                                                                                    "title":  "Name"
+                                                                                                                },
+                                                                                                       "file":  {
+                                                                                                                    "type":  "string",
+                                                                                                                    "contentMediaType":  "application/octet-stream",
+                                                                                                                    "title":  "File"
+                                                                                                                }
+                                                                                                   },
+                                                                                    "type":  "object",
+                                                                                    "required":  [
+                                                                                                     "name",
+                                                                                                     "file"
+                                                                                                 ],
+                                                                                    "title":  "Body_upload_avatar_api_avatars__post"
+                                                                                },
+                                       "HTTPValidationError":  {
+                                                                   "properties":  {
+                                                                                      "detail":  {
+                                                                                                     "items":  {
+                                                                                                                   "$ref":  "#/components/schemas/ValidationError"
+                                                                                                               },
+                                                                                                     "type":  "array",
+                                                                                                     "title":  "Detail"
+                                                                                                 }
+                                                                                  },
+                                                                   "type":  "object",
+                                                                   "title":  "HTTPValidationError"
+                                                               },
+                                       "Token":  {
+                                                     "properties":  {
+                                                                        "access_token":  {
+                                                                                             "type":  "string",
+                                                                                             "title":  "Access Token"
+                                                                                         },
+                                                                        "token_type":  {
+                                                                                           "type":  "string",
+                                                                                           "title":  "Token Type"
+                                                                                       }
+                                                                    },
+                                                     "type":  "object",
+                                                     "required":  [
+                                                                      "access_token",
+                                                                      "token_type"
+                                                                  ],
+                                                     "title":  "Token"
+                                                 },
+                                       "UserCreate":  {
+                                                          "properties":  {
+                                                                             "email":  {
+                                                                                           "type":  "string",
+                                                                                           "format":  "email",
+                                                                                           "title":  "Email"
+                                                                                       },
+                                                                             "password":  {
+                                                                                              "type":  "string",
+                                                                                              "maxLength":  120,
+                                                                                              "minLength":  8,
+                                                                                              "title":  "Password"
+                                                                                          },
+                                                                             "full_name":  {
+                                                                                               "type":  "string",
+                                                                                               "title":  "Full Name"
+                                                                                           }
+                                                                         },
+                                                          "type":  "object",
+                                                          "required":  [
+                                                                           "email",
+                                                                           "password",
+                                                                           "full_name"
+                                                                       ],
+                                                          "title":  "UserCreate"
+                                                      },
+                                       "UserResponse":  {
+                                                            "properties":  {
+                                                                               "id":  {
+                                                                                          "type":  "string",
+                                                                                          "title":  "Id"
+                                                                                      },
+                                                                               "email":  {
+                                                                                             "type":  "string",
+                                                                                             "format":  "email",
+                                                                                             "title":  "Email"
+                                                                                         },
+                                                                               "full_name":  {
+                                                                                                 "type":  "string",
+                                                                                                 "title":  "Full Name"
+                                                                                             },
+                                                                               "created_at":  {
+                                                                                                  "type":  "string",
+                                                                                                  "format":  "date-time",
+                                                                                                  "title":  "Created At"
+                                                                                              }
+                                                                           },
+                                                            "type":  "object",
+                                                            "required":  [
+                                                                             "id",
+                                                                             "email",
+                                                                             "full_name",
+                                                                             "created_at"
+                                                                         ],
+                                                            "title":  "UserResponse"
+                                                        },
+                                       "ValidationError":  {
+                                                               "properties":  {
+                                                                                  "loc":  {
+                                                                                              "items":  {
+                                                                                                            "anyOf":  [
+                                                                                                                          {
+                                                                                                                              "type":  "string"
+                                                                                                                          },
+                                                                                                                          {
+                                                                                                                              "type":  "integer"
+                                                                                                                          }
+                                                                                                                      ]
+                                                                                                        },
+                                                                                              "type":  "array",
+                                                                                              "title":  "Location"
+                                                                                          },
+                                                                                  "msg":  {
+                                                                                              "type":  "string",
+                                                                                              "title":  "Message"
+                                                                                          },
+                                                                                  "type":  {
+                                                                                               "type":  "string",
+                                                                                               "title":  "Error Type"
+                                                                                           },
+                                                                                  "input":  {
+                                                                                                "title":  "Input"
+                                                                                            },
+                                                                                  "ctx":  {
+                                                                                              "type":  "object",
+                                                                                              "title":  "Context"
+                                                                                          }
+                                                                              },
+                                                               "type":  "object",
+                                                               "required":  [
+                                                                                "loc",
+                                                                                "msg",
+                                                                                "type"
+                                                                            ],
+                                                               "title":  "ValidationError"
+                                                           }
+                                   },
+                       "securitySchemes":  {
+                                               "OAuth2PasswordBearer":  {
+                                                                            "type":  "oauth2",
+                                                                            "flows":  {
+                                                                                          "password":  {
+                                                                                                           "scopes":  {
+
+                                                                                                                      },
+                                                                                                           "tokenUrl":  "/api/auth/login"
+                                                                                                       }
+                                                                                      }
+                                                                        }
+                                           }
+                   }
+}
