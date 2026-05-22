@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Plus, User, Mic, FileAudio, FileImage, Loader2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Plus, User, Mic, FileAudio, FileImage, Loader2, Camera, StopCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,13 +20,40 @@ export default function AssetLibraryPage() {
   // Upload states
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [uploadType, setUploadType] = useState<"avatar" | "audio">("avatar");
+  const [uploadMode, setUploadMode] = useState<"file" | "capture">("file");
   const [assetName, setAssetName] = useState("");
   const [assetFile, setAssetFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
+  // Capture refs
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  
+  const [isRecording, setIsRecording] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+
   useEffect(() => {
     fetchAssets();
   }, []);
+
+  // Cleanup media streams when modal closes
+  useEffect(() => {
+    if (!uploadModalOpen) {
+      stopMediaTracks(); // clean up when modal closes
+      setAssetFile(null); // reset selected file
+      setUploadMode("file"); // reset mode
+    }
+  }, [uploadModalOpen]);
+
+  // Restart stream when mode switches to capture
+  useEffect(() => {
+    if (uploadModalOpen && uploadMode === "capture") {
+      startMediaStream();
+    } else {
+      stopMediaTracks();
+    }
+  }, [uploadMode, uploadModalOpen]);
 
   const fetchAssets = async () => {
     try {
@@ -47,7 +74,10 @@ export default function AssetLibraryPage() {
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!assetFile || !assetName) return;
+    if (!assetFile || !assetName) {
+      toast.error("Please provide a name and select/capture a file.");
+      return;
+    }
 
     setUploading(true);
     const formData = new FormData();
@@ -83,6 +113,87 @@ export default function AssetLibraryPage() {
     setUploadModalOpen(true);
   };
 
+  // --- Capture Subsystem ---
+  
+  const startMediaStream = async () => {
+    try {
+      if (uploadType === "avatar") {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        setStream(stream);
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } else {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        setStream(stream);
+      }
+    } catch (err) {
+      toast.error("Failed to access camera or microphone. Please check permissions.");
+    }
+  };
+
+  const stopMediaTracks = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+    }
+    setStream(null);
+    if (isRecording) {
+      setIsRecording(false);
+    }
+  };
+
+  const captureImage = () => {
+    if (videoRef.current) {
+      const canvas = document.createElement("canvas");
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const fi = new File([blob], "captured-avatar.jpg", { type: "image/jpeg" });
+            setAssetFile(fi);
+            toast.success("Picture captured!");
+          }
+        }, "image/jpeg");
+      }
+    }
+  };
+
+  const toggleAudioRecording = () => {
+    if (isRecording) {
+      // Stop recording
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+        mediaRecorderRef.current.stop();
+        setIsRecording(false);
+      }
+    } else {
+      // Start recording
+      if (stream) {
+        audioChunksRef.current = [];
+        const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorderRef.current = mediaRecorder;
+        
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) audioChunksRef.current.push(e.data);
+        };
+        
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+          const fi = new File([audioBlob], "recorded-voice.webm", { type: "audio/webm" });
+          setAssetFile(fi);
+          toast.success("Voice recorded!");
+        };
+        
+        mediaRecorder.start();
+        setIsRecording(true);
+      }
+    }
+  };
+
+  // --- Render ---
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
@@ -103,15 +214,23 @@ export default function AssetLibraryPage() {
             {/* The actual buttons are in the tabs below, but this is a global hidden trigger or fallback */}
             <div className="hidden"></div>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle>Upload {uploadType === "avatar" ? "Avatar" : "Voice Sample"}</DialogTitle>
+              <DialogTitle>Upload or Capture {uploadType === "avatar" ? "Avatar" : "Voice"}</DialogTitle>
               <DialogDescription>
                 {uploadType === "avatar" 
-                  ? "Upload a clear, forward-facing picture of yourself." 
-                  : "Upload a clean, noise-free audio sample (WAV/MP3) between 30s-60s."}
+                  ? "Upload a clear picture, or use your webcam to take one right now." 
+                  : "Upload a clean audio sample, or record it directly via your microphone."}
               </DialogDescription>
             </DialogHeader>
+
+            <Tabs value={uploadMode} onValueChange={(val: any) => setUploadMode(val)} className="w-full mt-2">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="file">Upload File</TabsTrigger>
+                <TabsTrigger value="capture">Use {uploadType === "avatar" ? "Camera" : "Microphone"}</TabsTrigger>
+              </TabsList>
+            </Tabs>
+
             <form onSubmit={handleUpload} className="space-y-6 pt-4">
               <div className="grid gap-2">
                 <Label htmlFor="name">Display Name</Label>
@@ -123,18 +242,58 @@ export default function AssetLibraryPage() {
                   required 
                 />
               </div>
+              
+              {/* Conditional File Input vs Capture UI */}
               <div className="grid gap-2">
-                <Label htmlFor="file">File</Label>
-                <Input 
-                  id="file" 
-                  type="file" 
-                  accept={uploadType === "avatar" ? "image/png, image/jpeg, image/jpg" : "audio/mpeg, audio/wav, audio/mp3"}
-                  onChange={(e) => setAssetFile(e.target.files?.[0] || null)}
-                  required 
-                  className="cursor-pointer file:text-zinc-600 file:bg-zinc-100 file:border-0 file:mr-4 file:px-4 file:py-1 file:rounded-md hover:file:bg-zinc-200"
-                />
+                <Label>{uploadMode === "file" ? "File" : "Capture"}</Label>
+                
+                {uploadMode === "file" ? (
+                  <Input 
+                    id="file" 
+                    type="file" 
+                    accept={uploadType === "avatar" ? "image/png, image/jpeg, image/jpg" : "audio/mpeg, audio/wav, audio/mp3"}
+                    onChange={(e) => setAssetFile(e.target.files?.[0] || null)}
+                    required 
+                    className="cursor-pointer file:text-zinc-600 file:bg-zinc-100 file:border-0 file:mr-4 file:px-4 file:py-1 file:rounded-md hover:file:bg-zinc-200"
+                  />
+                ) : (
+                  <div className="border rounded-md p-4 bg-zinc-50 flex flex-col items-center justify-center min-h-[200px]">
+                    {uploadType === "avatar" ? (
+                      <>
+                        <div className="w-full relative rounded-md overflow-hidden bg-black mb-4 flex items-center justify-center">
+                          <video ref={videoRef} autoPlay playsInline muted className="w-full object-cover max-h-[300px]" />
+                        </div>
+                        <Button type="button" onClick={captureImage} variant="secondary" className="w-full gap-2">
+                          <Camera className="w-4 h-4" /> Snap Picture
+                        </Button>
+                      </>
+                    ) : (
+                      <div className="flex flex-col items-center gap-4 text-center">
+                        <div className="text-sm text-zinc-500 max-w-[250px]">
+                          Speak clearly into your microphone for about 10 seconds to generate a good clone.
+                        </div>
+                        <Button 
+                          type="button" 
+                          onClick={toggleAudioRecording} 
+                          variant={isRecording ? "destructive" : "secondary"} 
+                          className="w-full gap-2"
+                        >
+                          {isRecording ? <StopCircle className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                          {isRecording ? "Stop Recording" : "Start Recording"}
+                        </Button>
+                      </div>
+                    )}
+
+                    {assetFile && (
+                      <div className="mt-4 text-xs font-medium text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full flex items-center gap-2">
+                        <span>Capture ready: {assetFile.name} ({Math.round(assetFile.size / 1024)} KB)</span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
-              <Button type="submit" className="w-full" disabled={uploading}>
+
+              <Button type="submit" className="w-full bg-zinc-900" disabled={uploading || !assetFile}>
                 {uploading ? (
                   <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Uploading...</>
                 ) : (
@@ -213,9 +372,8 @@ export default function AssetLibraryPage() {
                       <h3 className="font-medium text-base truncate" title={audio.name}>{audio.name}</h3>
                       <p className="text-xs text-zinc-500 mt-1 mb-4">{new Date(audio.created_at).toLocaleDateString()}</p>
                       
-                      <div className="w-full bg-zinc-100 rounded-full h-1.5 overflow-hidden">
-                        {/* Fake audio waveform visual */}
-                        <div className="bg-zinc-300 h-full w-full opacity-50" />
+                      <div className="w-full mt-2">
+                        <audio controls src={audio.audio_url} className="w-full h-9 rounded-md" />
                       </div>
                     </div>
                   </div>
