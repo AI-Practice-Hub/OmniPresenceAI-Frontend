@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User, Mic, Play, Sparkles, Loader2, ArrowRight } from "lucide-react";
+import { User, Mic, Sparkles, Loader2, ArrowRight } from "lucide-react";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,6 +20,7 @@ export default function StudioPage() {
   
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [isEnhancing, setIsEnhancing] = useState(false);
 
   useEffect(() => {
     const fetchAssets = async () => {
@@ -42,6 +44,23 @@ export default function StudioPage() {
     };
     fetchAssets();
   }, []);
+
+  const handleEnhance = async () => {
+    if (!script.trim()) {
+      toast.error("Please write a rough idea first.");
+      return;
+    }
+    setIsEnhancing(true);
+    try {
+      const response = await api.post("/api/scripts/generate", { idea: script });
+      setScript(response.data.script);
+      toast.success("Script magically enhanced!");
+    } catch (err) {
+      toast.error("Failed to enhance script.");
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
 
   const handleGenerate = async () => {
     if (!selectedAvatar || !selectedAudio || !script.trim()) {
@@ -154,18 +173,48 @@ export default function StudioPage() {
               <div className="w-6 h-6 rounded-full bg-zinc-900 text-white flex items-center justify-center text-xs font-bold">3</div>
               <h3 className="font-semibold text-lg">Write Script</h3>
             </div>
-            <Button variant="outline" size="sm" className="h-8 text-xs bg-white text-zinc-600 gap-1.5 border-zinc-200">
-              <Sparkles className="w-3.5 h-3.5" />
-              Enhance with AI
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className={`h-8 text-xs gap-1.5 transition-all
+                ${isEnhancing 
+                  ? 'border-indigo-200 bg-indigo-50 text-indigo-600' 
+                  : 'bg-white text-zinc-600 border-zinc-200 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50/50'
+                }
+              `}
+              onClick={handleEnhance}
+              disabled={isEnhancing || !script.trim()}
+            >
+              {isEnhancing ? (
+                <><Sparkles className="w-3.5 h-3.5 animate-pulse" /> Enhancing...</>
+              ) : (
+                <><Sparkles className="w-3.5 h-3.5" /> Enhance with AI</>
+              )}
             </Button>
           </div>
 
-          <Textarea 
-            placeholder="Type what you want your digital twin to say here... Make sure to use natural sentence structures for the best lip-sync results."
-            className="flex-1 min-h-[300px] sm:min-h-[400px] resize-none border-zinc-200 focus-visible:ring-zinc-900 bg-white shadow-sm text-base leading-relaxed p-4"
-            value={script}
-            onChange={(e) => setScript(e.target.value)}
-          />
+          <div className="relative flex-1 min-h-[300px] sm:min-h-[400px]">
+            <Textarea 
+              disabled={isEnhancing}
+              placeholder="Type what you want your digital twin to say here... Make sure to use natural sentence structures for the best lip-sync results."
+              className={`absolute inset-0 h-full w-full resize-none transition-all duration-300 shadow-sm text-base leading-relaxed p-4 bg-white border-zinc-200 focus-visible:ring-zinc-900
+                ${isEnhancing ? 'opacity-30 blur-[1px]' : 'opacity-100'}
+              `}
+              value={script}
+              onChange={(e) => setScript(e.target.value)}
+            />
+            {isEnhancing && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                <div className="w-64 h-64 opacity-80">
+                  <DotLottieReact
+                    src="/sparkles.lottie"
+                    loop
+                    autoplay
+                  />
+                </div>
+              </div>
+            )}
+          </div>
 
           <div className="mt-6 pt-6 border-t border-zinc-200 flex items-center justify-between">
             <div className="text-sm text-zinc-500 hidden sm:block">

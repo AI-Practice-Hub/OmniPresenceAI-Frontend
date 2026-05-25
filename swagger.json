@@ -243,6 +243,55 @@
                                                                  ]
                                                 }
                                    },
+                  "/api/scripts/generate":  {
+                                                "post":  {
+                                                             "tags":  [
+                                                                          "Scripts"
+                                                                      ],
+                                                             "summary":  "Generate Script",
+                                                             "description":  "Generate a professional spoken-word script based on a rough user idea.",
+                                                             "operationId":  "generate_script_api_scripts_generate_post",
+                                                             "requestBody":  {
+                                                                                 "content":  {
+                                                                                                 "application/json":  {
+                                                                                                                          "schema":  {
+                                                                                                                                         "$ref":  "#/components/schemas/ScriptGenerateRequest"
+                                                                                                                                     }
+                                                                                                                      }
+                                                                                             },
+                                                                                 "required":  true
+                                                                             },
+                                                             "responses":  {
+                                                                               "200":  {
+                                                                                           "description":  "Successful Response",
+                                                                                           "content":  {
+                                                                                                           "application/json":  {
+                                                                                                                                    "schema":  {
+                                                                                                                                                   "$ref":  "#/components/schemas/ScriptGenerateResponse"
+                                                                                                                                               }
+                                                                                                                                }
+                                                                                                       }
+                                                                                       },
+                                                                               "422":  {
+                                                                                           "description":  "Validation Error",
+                                                                                           "content":  {
+                                                                                                           "application/json":  {
+                                                                                                                                    "schema":  {
+                                                                                                                                                   "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                               }
+                                                                                                                                }
+                                                                                                       }
+                                                                                       }
+                                                                           },
+                                                             "security":  [
+                                                                              {
+                                                                                  "OAuth2PasswordBearer":  [
+
+                                                                                                           ]
+                                                                              }
+                                                                          ]
+                                                         }
+                                            },
                   "/":  {
                             "get":  {
                                         "summary":  "Root",
@@ -442,6 +491,32 @@
                                                                    "type":  "object",
                                                                    "title":  "HTTPValidationError"
                                                                },
+                                       "ScriptGenerateRequest":  {
+                                                                     "properties":  {
+                                                                                        "idea":  {
+                                                                                                     "type":  "string",
+                                                                                                     "title":  "Idea"
+                                                                                                 }
+                                                                                    },
+                                                                     "type":  "object",
+                                                                     "required":  [
+                                                                                      "idea"
+                                                                                  ],
+                                                                     "title":  "ScriptGenerateRequest"
+                                                                 },
+                                       "ScriptGenerateResponse":  {
+                                                                      "properties":  {
+                                                                                         "script":  {
+                                                                                                        "type":  "string",
+                                                                                                        "title":  "Script"
+                                                                                                    }
+                                                                                     },
+                                                                      "type":  "object",
+                                                                      "required":  [
+                                                                                       "script"
+                                                                                   ],
+                                                                      "title":  "ScriptGenerateResponse"
+                                                                  },
                                        "Token":  {
                                                      "properties":  {
                                                                         "access_token":  {
