@@ -292,6 +292,133 @@
                                                                           ]
                                                          }
                                             },
+                  "/api/runs/":  {
+                                     "get":  {
+                                                 "tags":  [
+                                                              "runs"
+                                                          ],
+                                                 "summary":  "List Runs Endpoint",
+                                                 "operationId":  "list_runs_endpoint_api_runs__get",
+                                                 "responses":  {
+                                                                   "200":  {
+                                                                               "description":  "Successful Response",
+                                                                               "content":  {
+                                                                                               "application/json":  {
+                                                                                                                        "schema":  {
+                                                                                                                                       "items":  {
+                                                                                                                                                     "$ref":  "#/components/schemas/RunResponse"
+                                                                                                                                                 },
+                                                                                                                                       "type":  "array",
+                                                                                                                                       "title":  "Response List Runs Endpoint Api Runs  Get"
+                                                                                                                                   }
+                                                                                                                    }
+                                                                                           }
+                                                                           }
+                                                               },
+                                                 "security":  [
+                                                                  {
+                                                                      "OAuth2PasswordBearer":  [
+
+                                                                                               ]
+                                                                  }
+                                                              ]
+                                             },
+                                     "post":  {
+                                                  "tags":  [
+                                                               "runs"
+                                                           ],
+                                                  "summary":  "Create Run Endpoint",
+                                                  "operationId":  "create_run_endpoint_api_runs__post",
+                                                  "requestBody":  {
+                                                                      "content":  {
+                                                                                      "application/json":  {
+                                                                                                               "schema":  {
+                                                                                                                              "$ref":  "#/components/schemas/RunCreateRequest"
+                                                                                                                          }
+                                                                                                           }
+                                                                                  },
+                                                                      "required":  true
+                                                                  },
+                                                  "responses":  {
+                                                                    "201":  {
+                                                                                "description":  "Successful Response",
+                                                                                "content":  {
+                                                                                                "application/json":  {
+                                                                                                                         "schema":  {
+                                                                                                                                        "$ref":  "#/components/schemas/RunResponse"
+                                                                                                                                    }
+                                                                                                                     }
+                                                                                            }
+                                                                            },
+                                                                    "422":  {
+                                                                                "description":  "Validation Error",
+                                                                                "content":  {
+                                                                                                "application/json":  {
+                                                                                                                         "schema":  {
+                                                                                                                                        "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                    }
+                                                                                                                     }
+                                                                                            }
+                                                                            }
+                                                                },
+                                                  "security":  [
+                                                                   {
+                                                                       "OAuth2PasswordBearer":  [
+
+                                                                                                ]
+                                                                   }
+                                                               ]
+                                              }
+                                 },
+                  "/api/runs/{run_id}":  {
+                                             "get":  {
+                                                         "tags":  [
+                                                                      "runs"
+                                                                  ],
+                                                         "summary":  "Get Run Endpoint",
+                                                         "operationId":  "get_run_endpoint_api_runs__run_id__get",
+                                                         "security":  [
+                                                                          {
+                                                                              "OAuth2PasswordBearer":  [
+
+                                                                                                       ]
+                                                                          }
+                                                                      ],
+                                                         "parameters":  [
+                                                                            {
+                                                                                "name":  "run_id",
+                                                                                "in":  "path",
+                                                                                "required":  true,
+                                                                                "schema":  {
+                                                                                               "type":  "string",
+                                                                                               "title":  "Run Id"
+                                                                                           }
+                                                                            }
+                                                                        ],
+                                                         "responses":  {
+                                                                           "200":  {
+                                                                                       "description":  "Successful Response",
+                                                                                       "content":  {
+                                                                                                       "application/json":  {
+                                                                                                                                "schema":  {
+                                                                                                                                               "$ref":  "#/components/schemas/RunResponse"
+                                                                                                                                           }
+                                                                                                                            }
+                                                                                                   }
+                                                                                   },
+                                                                           "422":  {
+                                                                                       "description":  "Validation Error",
+                                                                                       "content":  {
+                                                                                                       "application/json":  {
+                                                                                                                                "schema":  {
+                                                                                                                                               "$ref":  "#/components/schemas/HTTPValidationError"
+                                                                                                                                           }
+                                                                                                                            }
+                                                                                                   }
+                                                                                   }
+                                                                       }
+                                                     }
+                                         },
                   "/":  {
                             "get":  {
                                         "summary":  "Root",
@@ -491,6 +618,135 @@
                                                                    "type":  "object",
                                                                    "title":  "HTTPValidationError"
                                                                },
+                                       "RunCreateRequest":  {
+                                                                "properties":  {
+                                                                                   "script":  {
+                                                                                                  "type":  "string",
+                                                                                                  "title":  "Script"
+                                                                                              },
+                                                                                   "audio_prompt_url":  {
+                                                                                                            "type":  "string",
+                                                                                                            "title":  "Audio Prompt Url"
+                                                                                                        },
+                                                                                   "avatar_url":  {
+                                                                                                      "anyOf":  [
+                                                                                                                    {
+                                                                                                                        "type":  "string"
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        "type":  "null"
+                                                                                                                    }
+                                                                                                                ],
+                                                                                                      "title":  "Avatar Url"
+                                                                                                  },
+                                                                                   "name":  {
+                                                                                                "anyOf":  [
+                                                                                                              {
+                                                                                                                  "type":  "string"
+                                                                                                              },
+                                                                                                              {
+                                                                                                                  "type":  "null"
+                                                                                                              }
+                                                                                                          ],
+                                                                                                "title":  "Name"
+                                                                                            }
+                                                                               },
+                                                                "type":  "object",
+                                                                "required":  [
+                                                                                 "script",
+                                                                                 "audio_prompt_url"
+                                                                             ],
+                                                                "title":  "RunCreateRequest"
+                                                            },
+                                       "RunResponse":  {
+                                                           "properties":  {
+                                                                              "id":  {
+                                                                                         "type":  "string",
+                                                                                         "title":  "Id"
+                                                                                     },
+                                                                              "user_id":  {
+                                                                                              "type":  "string",
+                                                                                              "title":  "User Id"
+                                                                                          },
+                                                                              "script":  {
+                                                                                             "type":  "string",
+                                                                                             "title":  "Script"
+                                                                                         },
+                                                                              "audio_prompt_url":  {
+                                                                                                       "type":  "string",
+                                                                                                       "title":  "Audio Prompt Url"
+                                                                                                   },
+                                                                              "avatar_url":  {
+                                                                                                 "anyOf":  [
+                                                                                                               {
+                                                                                                                   "type":  "string"
+                                                                                                               },
+                                                                                                               {
+                                                                                                                   "type":  "null"
+                                                                                                               }
+                                                                                                           ],
+                                                                                                 "title":  "Avatar Url"
+                                                                                             },
+                                                                              "name":  {
+                                                                                           "anyOf":  [
+                                                                                                         {
+                                                                                                             "type":  "string"
+                                                                                                         },
+                                                                                                         {
+                                                                                                             "type":  "null"
+                                                                                                         }
+                                                                                                     ],
+                                                                                           "title":  "Name"
+                                                                                       },
+                                                                              "generated_audio_url":  {
+                                                                                                          "anyOf":  [
+                                                                                                                        {
+                                                                                                                            "type":  "string"
+                                                                                                                        },
+                                                                                                                        {
+                                                                                                                            "type":  "null"
+                                                                                                                        }
+                                                                                                                    ],
+                                                                                                          "title":  "Generated Audio Url"
+                                                                                                      },
+                                                                              "status":  {
+                                                                                             "type":  "string",
+                                                                                             "title":  "Status"
+                                                                                         },
+                                                                              "created_at":  {
+                                                                                                 "type":  "string",
+                                                                                                 "format":  "date-time",
+                                                                                                 "title":  "Created At"
+                                                                                             },
+                                                                              "updated_at":  {
+                                                                                                 "type":  "string",
+                                                                                                 "format":  "date-time",
+                                                                                                 "title":  "Updated At"
+                                                                                             },
+                                                                              "error":  {
+                                                                                            "anyOf":  [
+                                                                                                          {
+                                                                                                              "type":  "string"
+                                                                                                          },
+                                                                                                          {
+                                                                                                              "type":  "null"
+                                                                                                          }
+                                                                                                      ],
+                                                                                            "title":  "Error"
+                                                                                        }
+                                                                          },
+                                                           "type":  "object",
+                                                           "required":  [
+                                                                            "id",
+                                                                            "user_id",
+                                                                            "script",
+                                                                            "audio_prompt_url",
+                                                                            "status",
+                                                                            "created_at",
+                                                                            "updated_at"
+                                                                        ],
+                                                           "title":  "RunResponse"
+                                                       },
                                        "ScriptGenerateRequest":  {
                                                                      "properties":  {
                                                                                         "idea":  {

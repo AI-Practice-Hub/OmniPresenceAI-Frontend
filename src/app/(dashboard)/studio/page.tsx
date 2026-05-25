@@ -1,22 +1,27 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { User, Mic, Sparkles, Loader2, ArrowRight } from "lucide-react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import api from "@/lib/api";
 import { Avatar, Audio as AudioModel } from "@/types";
 
 export default function StudioPage() {
+  const router = useRouter();
+  
   const [avatars, setAvatars] = useState<Avatar[]>([]);
   const [audios, setAudios] = useState<AudioModel[]>([]);
   
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const [selectedAudio, setSelectedAudio] = useState<string | null>(null);
   const [script, setScript] = useState("");
+  const [runName, setRunName] = useState("");
   
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
@@ -68,13 +73,22 @@ export default function StudioPage() {
       return;
     }
 
+    const avatar = avatars.find(a => a.id === selectedAvatar);
+    const audio = audios.find(a => a.id === selectedAudio);
+
+    if (!avatar || !audio) return;
+
     setGenerating(true);
     try {
-      // Mock generation delay since there is no run endpoint in Swagger yet
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await api.post("/api/runs/", {
+        script,
+        audio_prompt_url: audio.audio_url,
+        avatar_url: avatar.image_url,
+        name: runName.trim() || null
+      });
       
-      toast.success("Generation started successfully! Check History for outputs.");
-      setScript("");
+      toast.success("Generation started successfully! Redirecting to History.");
+      router.push("/history");
     } catch (err) {
       toast.error("Failed to start generation.");
     } finally {
@@ -168,6 +182,15 @@ export default function StudioPage() {
 
         {/* Right Column: Script & Generate */}
         <div className="lg:col-span-7 bg-zinc-50 rounded-2xl p-6 border border-zinc-100 flex flex-col">
+          <div className="mb-4">
+            <Input 
+              placeholder="e.g. Acme Promo Video (Optional)" 
+              value={runName} 
+              onChange={(e) => setRunName(e.target.value)} 
+              className="bg-white border-zinc-200"
+            />
+          </div>
+          
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2 text-zinc-900">
               <div className="w-6 h-6 rounded-full bg-zinc-900 text-white flex items-center justify-center text-xs font-bold">3</div>
